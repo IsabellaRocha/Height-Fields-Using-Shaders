@@ -390,7 +390,69 @@ void getHeightsFromImage() {
                 linesColors.push_back(heightOfNextVertex / 255.0);
                 linesColors.push_back(heightOfNextVertex / 255.0);
                 linesColors.push_back(1.0);
+            }
+            if (i < imageWidth - 1 && j < imageHeight - 1) {
+                float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
+                float heightOfUpVertex = heightmapImage->getPixel(i, j + 1, 0);
+                float heightOfUpRightVertex = heightmapImage->getPixel(i + 1, j + 1, 0);
 
+                //Creates bottom left triangle
+                trianglesCoordinates.push_back((float)i);
+                trianglesCoordinates.push_back(heightOfVertex * 0.2);
+                trianglesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfVertex / 255.0);
+                trianglesColors.push_back(heightOfVertex / 255.0);
+                trianglesColors.push_back(heightOfVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                trianglesCoordinates.push_back((float)i + 1);
+                trianglesCoordinates.push_back(heightOfRightVertex * 0.2);
+                trianglesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                trianglesCoordinates.push_back((float)i);
+                trianglesCoordinates.push_back(heightOfUpVertex * 0.2);
+                trianglesCoordinates.push_back((float)-(j + 1));
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                //Creates top right triangle
+                trianglesCoordinates.push_back((float)(i + 1));
+                trianglesCoordinates.push_back(heightOfUpRightVertex * 0.2);
+                trianglesCoordinates.push_back((float)-(j + 1));
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfUpRightVertex / 255.0);
+                trianglesColors.push_back(heightOfUpRightVertex / 255.0);
+                trianglesColors.push_back(heightOfUpRightVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                trianglesCoordinates.push_back((float)i + 1);
+                trianglesCoordinates.push_back(heightOfRightVertex * 0.2);
+                trianglesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                trianglesCoordinates.push_back((float)i);
+                trianglesCoordinates.push_back(heightOfUpVertex * 0.2);
+                trianglesCoordinates.push_back((float)-(j + 1));
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                
             }
             //Load x, y, z coordinates of that float into line vector(will be used in VBO)
             
