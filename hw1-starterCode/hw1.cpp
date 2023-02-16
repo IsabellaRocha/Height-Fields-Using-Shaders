@@ -61,12 +61,13 @@ ImageIO * heightmapImage;
 
 // VBO and VAO handles.
 GLuint vertexPositionAndColorVBO;
-GLuint pointVAO, lineVAO, triangleVAO;
-GLuint pointVBO, lineVBO, triangleVBO;
+GLuint pointsVAO, linesVAO, trianglesVAO, smoothingVAO;
+GLuint pointsVBO, linesVBO, trianglesVBO, upVBO, downVBO, leftVBO, rightVBO, centerVBO;
 
-vector<float> pointCoordinates, pointColors;
-vector<float> lineCoordinates, lineColors;
-vector<float> triangelCoordinates, triangleColors;
+vector<float> pointsCoordinates, pointsColors;
+vector<float> linesCoordinates, linesColors;
+vector<float> trianglesCoordinates, trianglesColors;
+vector<float> up, down, left, right, centerCoordinates, centerColors;
 
 // CSCI 420 helper classes.
 OpenGLMatrix matrix;
@@ -101,8 +102,8 @@ void displayFunc()
                 0.0, 0.0, 0.0, 
                 0.0, 1.0, 0.0);
 */
-  matrix.LookAt(128, 128, 200,
-      0.0, 0.0, 0.0,
+  matrix.LookAt(128, 200, 100,
+      128, 0.0, -128,
       0.0, 1.0, 0.0);
       
   // In here, you can do additional modeling on the object, such as performing translations, rotations and scales.
@@ -134,9 +135,28 @@ void displayFunc()
   // Execute the rendering.
   //glBindVertexArray(triangleVAO); // Bind the VAO that we want to render.
   //glDrawArrays(GL_TRIANGLES, 0, numVertices); // Render the VAO, by rendering "numVertices", starting from vertex 0.
-
-  glBindVertexArray(pointVAO);
-  glDrawArrays(GL_POINTS, 0, pointCoordinates.size() / 3);
+  switch (displayMode) {
+    case POINTSMODE:
+        glBindVertexArray(pointsVAO);
+        glDrawArrays(GL_POINTS, 0, pointsCoordinates.size() / 3);
+        glBindVertexArray(0);
+        break;
+    case LINESMODE:
+        glBindVertexArray(linesVAO);
+        glDrawArrays(GL_LINES, 0, linesCoordinates.size() / 3);
+        glBindVertexArray(0);
+        break;
+    case TRIANGLESMODE:
+        glBindVertexArray(trianglesVAO);
+        glDrawArrays(GL_TRIANGLES, 0, trianglesCoordinates.size() / 3);
+        glBindVertexArray(0);
+        break;
+    case SMOOTHINGMODE:
+        glBindVertexArray(smoothingVAO);
+        glDrawArrays(GL_TRIANGLES, 0, centerCoordinates.size() / 3);
+        glBindVertexArray(0);
+        break;
+  }
   // Swap the double-buffers.
   glutSwapBuffers();
 }
@@ -294,7 +314,7 @@ void keyboardFunc(unsigned char key, int x, int y)
     break;
 
     case '1':
-        displayMode = POINTSMODE;
+        displayMode = POINTSMODE;        
         break;
     case '2':
         displayMode = LINESMODE;
@@ -314,33 +334,72 @@ void getHeightsFromImage() {
     int imageWidth = heightmapImage->getWidth();
     float heightOfVertex;
     
-    for (int i = -imageWidth / 2; i < imageWidth / 2; i++) {
-        for (int j = -imageHeight / 2; j < imageHeight / 2; j++) {
-            heightOfVertex = heightmapImage->getPixel(i + imageWidth / 2, j + imageHeight / 2, 0) * 0.2;
+    for (int i = 0; i < imageWidth; i++) {
+        for (int j = 0; j < imageHeight; j++) {
+            heightOfVertex = heightmapImage->getPixel(i, j, 0);
 
             //Load x, y, z coordinates of that float into point vector (will be used in VBO)
-            pointCoordinates.push_back((float) i);
-            pointCoordinates.push_back(heightOfVertex);
-            pointCoordinates.push_back((float) -j);
+            pointsCoordinates.push_back((float) i);
+            pointsCoordinates.push_back(heightOfVertex * 0.2);
+            pointsCoordinates.push_back((float) -j);
 
-            //Load r, g, b, and alpha, but since it's all white it's just 1, 1, 1, 1
-            pointColors.push_back(1.0f);
-            pointColors.push_back(1.0f);
-            pointColors.push_back(1.0f);
-            pointColors.push_back(1.0f);
+            //Load r, g, b, and alpha
+            pointsColors.push_back(heightOfVertex / 255.0);
+            pointsColors.push_back(heightOfVertex / 255.0);
+            pointsColors.push_back(heightOfVertex / 255.0);
+            pointsColors.push_back(1.0);
 
+            //Make sure you're not looking at point off the image/out of bounds check
+            if (j < imageHeight - 1) {
+                float heightOfNextVertex = heightmapImage->getPixel(i, j + 1, 0);
+                linesCoordinates.push_back((float)i);
+                linesCoordinates.push_back(heightOfVertex * 0.2);
+                linesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(1.0);
+
+                linesCoordinates.push_back((float)i);
+                linesCoordinates.push_back(heightOfNextVertex * 0.2);
+                linesCoordinates.push_back((float)-(j + 1));
+                //Load r, g, b, and alpha
+                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(1.0);
+
+            }
+            if (i < imageWidth - 1) {
+                float heightOfNextVertex = heightmapImage->getPixel(i + 1, j, 0);
+                linesCoordinates.push_back((float)i);
+                linesCoordinates.push_back(heightOfVertex * 0.2);
+                linesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(1.0);
+
+                linesCoordinates.push_back((float)(i + 1));
+                linesCoordinates.push_back(heightOfNextVertex * 0.2);
+                linesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(1.0);
+
+            }
+            //Load x, y, z coordinates of that float into line vector(will be used in VBO)
+            
         }
         
     }
-    /*
-    for (int idx = 0; idx < pointCoordinates.size(); idx++) {
-        if (idx % 3 == 0) {
-            cout << endl;
-        }
-        cout << pointCoordinates[idx] << ", ";
-        
-    }
-    */
+    cout << pointsCoordinates.size() << endl;
+    cout << linesCoordinates.size() << endl;
+    
 }
 
 void initScene(int argc, char *argv[])
@@ -357,15 +416,6 @@ void initScene(int argc, char *argv[])
   // Set the background color.
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black color.
   getHeightsFromImage();
-  /*
-  for (int idx = 0; idx < pointCoordinates.size(); idx++) {
-      if (idx % 3 == 0) {
-          cout << endl;
-      }
-      cout << pointCoordinates[idx] << ", ";
-
-  }
-  */
   
   // Enable z-buffering (i.e., hidden surface removal using the z-buffer algorithm).
   glEnable(GL_DEPTH_TEST);
@@ -379,70 +429,92 @@ void initScene(int argc, char *argv[])
   }
   pipelineProgram->Bind();
 
-  // Prepare the triangle position and color data for the VBO. 
-  // The code below sets up a single triangle (3 vertices).
-  // The triangle will be rendered using GL_TRIANGLES (in displayFunc()).
-  /*
-  numVertices = 3; // This must be a global variable, so that we know how many vertices to render in glDrawArrays.
 
-  // Vertex positions.
-  float * positions = (float*) malloc (numVertices * 3 * sizeof(float)); // 3 floats per vertex, i.e., x,y,z
-  positions[0] = 0.0; positions[1] = 0.0; positions[2] = 0.0; // (x,y,z) coordinates of the first vertex
-  positions[3] = 0.0; positions[4] = 1.0; positions[5] = 0.0; // (x,y,z) coordinates of the second vertex
-  positions[6] = 1.0; positions[7] = 0.0; positions[8] = 0.0; // (x,y,z) coordinates of the third vertex
-
-  // Vertex colors.
-  float * colors = (float*) malloc (numVertices * 4 * sizeof(float)); // 4 floats per vertex, i.e., r,g,b,a
-  colors[0] = 0.0; colors[1] = 0.0;  colors[2] = 1.0;  colors[3] = 1.0; // (r,g,b,a) channels of the first vertex
-  colors[4] = 1.0; colors[5] = 0.0;  colors[6] = 0.0;  colors[7] = 1.0; // (r,g,b,a) channels of the second vertex
-  colors[8] = 0.0; colors[9] = 1.0; colors[10] = 0.0; colors[11] = 1.0; // (r,g,b,a) channels of the third vertex
-  */
-
-  cout << sizeof(float) * pointCoordinates.size() << endl;
-  cout << sizeof(float) * pointColors.size() << endl;
-  glGenBuffers(1, &pointVBO);
-  glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
-
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pointCoordinates.size() + sizeof(float) * pointColors.size(), nullptr, GL_STATIC_DRAW);
- 
-  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * pointCoordinates.size(), (float*)pointCoordinates.data());
-  glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * pointCoordinates.size(), sizeof(float) * pointColors.size(), (float*)pointColors.data());
-
-  glGenVertexArrays(1, &pointVAO);
-  glBindVertexArray(pointVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
-  /*
-  // Create the VBOs. There is a single VBO in this example. This operation must be performed BEFORE we initialize any VAOs.
-  glGenBuffers(1, &vertexPositionAndColorVBO);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexPositionAndColorVBO);
-  // First, allocate an empty VBO of the correct size to hold positions and colors.
-  const int numBytesInPositions = numVertices * 3 * sizeof(float);
-  const int numBytesInColors = numVertices * 4 * sizeof(float);
-  glBufferData(GL_ARRAY_BUFFER, numBytesInPositions + numBytesInColors, nullptr, GL_STATIC_DRAW);
-  // Next, write the position and color data into the VBO.
-  glBufferSubData(GL_ARRAY_BUFFER, 0, numBytesInPositions, positions); // The VBO starts with positions.
-  glBufferSubData(GL_ARRAY_BUFFER, numBytesInPositions, numBytesInColors, colors); // The colors are written after the positions.
-
-  // Create the VAOs. There is a single VAO in this example.
-  glGenVertexArrays(1, &triangleVAO);
-  glBindVertexArray(triangleVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexPositionAndColorVBO); // The VBO that we bind here will be used in the glVertexAttribPointer calls below. If we forget to bind the VBO here, the program will malfunction.
-  */
-  // Set up the relationship between the "position" shader variable and the VAO.
   const GLuint locationOfPosition = glGetAttribLocation(pipelineProgram->GetProgramHandle(), "position"); // Obtain a handle to the shader variable "position".
-  glEnableVertexAttribArray(locationOfPosition); // Must always enable the vertex attribute. By default, it is disabled.
+
   const int stride = 0; // Stride is 0, i.e., data is tightly packed in the VBO.
   const GLboolean normalized = GL_FALSE; // Normalization is off.
-  glVertexAttribPointer(locationOfPosition, 3, GL_FLOAT, normalized, stride, (const void *)0); // The shader variable "position" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset 0 in the VBO. There are 3 float entries per vertex in the VBO (i.e., x,y,z coordinates). 
+  const GLuint locationOfColor = glGetAttribLocation(pipelineProgram->GetProgramHandle(), "color"); // Obtain a handle to the shader variable "color".
+
+  //Originally had this in a switch, but it's in the init so switching between things didn't work since the other VAOs and VBOs weren't loaded, must load all of them
+  
+  /*POINT VBOS AND VAOS*/
+  // Create the VBOs. There is a single VBO in this example. This operation must be performed BEFORE we initialize any VAOs.
+  glGenBuffers(1, &pointsVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+  // First, allocate an empty VBO of the correct size to hold positions and colors.
+  int numBytesPointsCoordinates = sizeof(float) * pointsCoordinates.size();
+  int numBytesPointsColors = sizeof(float) * pointsColors.size();
+  glBufferData(GL_ARRAY_BUFFER, numBytesPointsCoordinates + numBytesPointsColors, nullptr, GL_STATIC_DRAW);
+  // Next, write the position and color data into the VBO.
+  glBufferSubData(GL_ARRAY_BUFFER, 0, numBytesPointsCoordinates, (float*)pointsCoordinates.data());
+  glBufferSubData(GL_ARRAY_BUFFER, numBytesPointsCoordinates, numBytesPointsColors, (float*)pointsColors.data());
+  // Create the VAOs. There is a single VAO in this example.
+  glGenVertexArrays(1, &pointsVAO);
+  glBindVertexArray(pointsVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+
+  // Set up the relationship between the "position" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfPosition); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfPosition, 3, GL_FLOAT, normalized, stride, (const void*)0); // The shader variable "position" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset 0 in the VBO. There are 3 float entries per vertex in the VBO (i.e., x,y,z coordinates). 
 
   // Set up the relationship between the "color" shader variable and the VAO.
-  const GLuint locationOfColor = glGetAttribLocation(pipelineProgram->GetProgramHandle(), "color"); // Obtain a handle to the shader variable "color".
   glEnableVertexAttribArray(locationOfColor); // Must always enable the vertex attribute. By default, it is disabled.
-  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void *)(unsigned long) (sizeof(float) * pointCoordinates.size())); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
+  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void*)(unsigned long)numBytesPointsCoordinates); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
 
-  // We don't need this data any more, as we have already uploaded it to the VBO. And so we can destroy it, to avoid a memory leak.
- // free(positions);
- // free(colors);
+  glBindBuffer(GL_ARRAY_BUFFER, 0); //Unbind in order to do lines next
+
+  /*LINE VBOS AND VAOS*/
+  // Create the VBOs. There is a single VBO in this example. This operation must be performed BEFORE we initialize any VAOs.
+  glGenBuffers(1, &linesVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, linesVBO);
+  // First, allocate an empty VBO of the correct size to hold positions and colors.
+  int numBytesLinesCoordinates = sizeof(float) * linesCoordinates.size();
+  int numBytesLinesColors = sizeof(float) * linesColors.size();
+  glBufferData(GL_ARRAY_BUFFER, numBytesLinesCoordinates + numBytesLinesColors, nullptr, GL_STATIC_DRAW);
+  // Next, write the position and color data into the VBO.
+  glBufferSubData(GL_ARRAY_BUFFER, 0, numBytesLinesCoordinates, (float*)linesCoordinates.data());
+  glBufferSubData(GL_ARRAY_BUFFER, numBytesLinesCoordinates, numBytesLinesColors, (float*)linesColors.data());
+  // Create the VAOs. There is a single VAO in this example.
+  glGenVertexArrays(1, &linesVAO);
+  glBindVertexArray(linesVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, linesVBO);
+
+  // Set up the relationship between the "position" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfPosition); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfPosition, 3, GL_FLOAT, normalized, stride, (const void*)0); // The shader variable "position" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset 0 in the VBO. There are 3 float entries per vertex in the VBO (i.e., x,y,z coordinates). 
+
+  // Set up the relationship between the "color" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfColor); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void*)(unsigned long)numBytesLinesCoordinates); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0); //Unbind in order to do triangles next
+
+  /*TRIANGLE VAOS AND VBOS*/
+  // Create the VBOs. There is a single VBO in this example. This operation must be performed BEFORE we initialize any VAOs.
+  glGenBuffers(1, &trianglesVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, trianglesVBO);
+  // First, allocate an empty VBO of the correct size to hold positions and colors.
+  int numBytesTrianglesCoordinates = sizeof(float) * trianglesCoordinates.size();
+  int numBytesTrianglesColors = sizeof(float) * trianglesColors.size();
+  glBufferData(GL_ARRAY_BUFFER, numBytesTrianglesCoordinates + numBytesTrianglesColors, nullptr, GL_STATIC_DRAW);
+  // Next, write the position and color data into the VBO.
+  glBufferSubData(GL_ARRAY_BUFFER, 0, numBytesTrianglesCoordinates, (float*)trianglesCoordinates.data());
+  glBufferSubData(GL_ARRAY_BUFFER, numBytesTrianglesCoordinates, numBytesTrianglesColors, (float*)trianglesColors.data());
+  // Create the VAOs. There is a single VAO in this example.
+  glGenVertexArrays(1, &trianglesVAO);
+  glBindVertexArray(trianglesVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, trianglesVBO);
+
+  // Set up the relationship between the "position" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfPosition); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfPosition, 3, GL_FLOAT, normalized, stride, (const void*)0); // The shader variable "position" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset 0 in the VBO. There are 3 float entries per vertex in the VBO (i.e., x,y,z coordinates). 
+
+  // Set up the relationship between the "color" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfColor); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void*)(unsigned long)numBytesTrianglesCoordinates); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // Check for any OpenGL errors.
   std::cout << "GL error: " << glGetError() << std::endl;
