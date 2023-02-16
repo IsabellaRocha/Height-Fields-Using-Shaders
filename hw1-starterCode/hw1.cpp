@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <vector>
 
 #if defined(WIN32) || defined(_WIN32)
   #ifdef _DEBUG
@@ -39,6 +40,8 @@ int rightMouseButton = 0; // 1 if pressed, 0 if not
 
 typedef enum { ROTATE, TRANSLATE, SCALE } CONTROL_STATE;
 CONTROL_STATE controlState = ROTATE;
+typedef enum { POINTSMODE, LINESMODE, TRIANGLESMODE, SMOOTHINGMODE } DISPLAY_MODE;
+DISPLAY_MODE displayMode = POINTSMODE;
 
 // Transformations of the terrain.
 float terrainRotate[3] = { 0.0f, 0.0f, 0.0f }; 
@@ -58,8 +61,12 @@ ImageIO * heightmapImage;
 
 // VBO and VAO handles.
 GLuint vertexPositionAndColorVBO;
-GLuint triangleVAO;
-int numVertices;
+GLuint pointVAO, lineVAO, triangleVAO;
+GLuint pointVBO, lineVBO, triangleVBO;
+
+vector<float> pointCoordinates, pointColors;
+vector<float> lineCoordinates, lineColors;
+vector<float> triangelCoordinates, triangleColors;
 
 // CSCI 420 helper classes.
 OpenGLMatrix matrix;
@@ -90,10 +97,14 @@ void displayFunc()
   // Set up the camera position, focus point, and the up vector.
   matrix.SetMatrixMode(OpenGLMatrix::ModelView);
   matrix.LoadIdentity();
-  matrix.LookAt(0.0, 0.0, 5.0, 
+  /*matrix.LookAt(0.0, 0.0, 5.0,
                 0.0, 0.0, 0.0, 
                 0.0, 1.0, 0.0);
-
+*/
+  matrix.LookAt(128, 128, 200,
+      0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0);
+      
   // In here, you can do additional modeling on the object, such as performing translations, rotations and scales.
   // ...
 
@@ -121,9 +132,11 @@ void displayFunc()
   pipelineProgram->SetProjectionMatrix(projectionMatrix);
 
   // Execute the rendering.
-  glBindVertexArray(triangleVAO); // Bind the VAO that we want to render.
-  glDrawArrays(GL_TRIANGLES, 0, numVertices); // Render the VAO, by rendering "numVertices", starting from vertex 0.
+  //glBindVertexArray(triangleVAO); // Bind the VAO that we want to render.
+  //glDrawArrays(GL_TRIANGLES, 0, numVertices); // Render the VAO, by rendering "numVertices", starting from vertex 0.
 
+  glBindVertexArray(pointVAO);
+  glDrawArrays(GL_POINTS, 0, pointCoordinates.size() / 3);
   // Swap the double-buffers.
   glutSwapBuffers();
 }
@@ -279,7 +292,55 @@ void keyboardFunc(unsigned char key, int x, int y)
       // Take a screenshot.
       saveScreenshot("screenshot.jpg");
     break;
+
+    case '1':
+        displayMode = POINTSMODE;
+        break;
+    case '2':
+        displayMode = LINESMODE;
+        break;
+    case '3':
+        displayMode = TRIANGLESMODE;
+        break;
+    case '4':
+        displayMode = SMOOTHINGMODE;
+        break;
   }
+}
+
+
+void getHeightsFromImage() {
+    int imageHeight = heightmapImage->getHeight();
+    int imageWidth = heightmapImage->getWidth();
+    float heightOfVertex;
+    
+    for (int i = -imageWidth / 2; i < imageWidth / 2; i++) {
+        for (int j = -imageHeight / 2; j < imageHeight / 2; j++) {
+            heightOfVertex = heightmapImage->getPixel(i + imageWidth / 2, j + imageHeight / 2, 0) * 0.2;
+
+            //Load x, y, z coordinates of that float into point vector (will be used in VBO)
+            pointCoordinates.push_back((float) i);
+            pointCoordinates.push_back(heightOfVertex);
+            pointCoordinates.push_back((float) -j);
+
+            //Load r, g, b, and alpha, but since it's all white it's just 1, 1, 1, 1
+            pointColors.push_back(1.0f);
+            pointColors.push_back(1.0f);
+            pointColors.push_back(1.0f);
+            pointColors.push_back(1.0f);
+
+        }
+        
+    }
+    /*
+    for (int idx = 0; idx < pointCoordinates.size(); idx++) {
+        if (idx % 3 == 0) {
+            cout << endl;
+        }
+        cout << pointCoordinates[idx] << ", ";
+        
+    }
+    */
 }
 
 void initScene(int argc, char *argv[])
@@ -291,10 +352,21 @@ void initScene(int argc, char *argv[])
     cout << "Error reading image " << argv[1] << "." << endl;
     exit(EXIT_FAILURE);
   }
+  
 
   // Set the background color.
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black color.
+  getHeightsFromImage();
+  /*
+  for (int idx = 0; idx < pointCoordinates.size(); idx++) {
+      if (idx % 3 == 0) {
+          cout << endl;
+      }
+      cout << pointCoordinates[idx] << ", ";
 
+  }
+  */
+  
   // Enable z-buffering (i.e., hidden surface removal using the z-buffer algorithm).
   glEnable(GL_DEPTH_TEST);
 
@@ -310,7 +382,7 @@ void initScene(int argc, char *argv[])
   // Prepare the triangle position and color data for the VBO. 
   // The code below sets up a single triangle (3 vertices).
   // The triangle will be rendered using GL_TRIANGLES (in displayFunc()).
-
+  /*
   numVertices = 3; // This must be a global variable, so that we know how many vertices to render in glDrawArrays.
 
   // Vertex positions.
@@ -324,7 +396,22 @@ void initScene(int argc, char *argv[])
   colors[0] = 0.0; colors[1] = 0.0;  colors[2] = 1.0;  colors[3] = 1.0; // (r,g,b,a) channels of the first vertex
   colors[4] = 1.0; colors[5] = 0.0;  colors[6] = 0.0;  colors[7] = 1.0; // (r,g,b,a) channels of the second vertex
   colors[8] = 0.0; colors[9] = 1.0; colors[10] = 0.0; colors[11] = 1.0; // (r,g,b,a) channels of the third vertex
+  */
 
+  cout << sizeof(float) * pointCoordinates.size() << endl;
+  cout << sizeof(float) * pointColors.size() << endl;
+  glGenBuffers(1, &pointVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
+
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pointCoordinates.size() + sizeof(float) * pointColors.size(), nullptr, GL_STATIC_DRAW);
+ 
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * pointCoordinates.size(), (float*)pointCoordinates.data());
+  glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * pointCoordinates.size(), sizeof(float) * pointColors.size(), (float*)pointColors.data());
+
+  glGenVertexArrays(1, &pointVAO);
+  glBindVertexArray(pointVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
+  /*
   // Create the VBOs. There is a single VBO in this example. This operation must be performed BEFORE we initialize any VAOs.
   glGenBuffers(1, &vertexPositionAndColorVBO);
   glBindBuffer(GL_ARRAY_BUFFER, vertexPositionAndColorVBO);
@@ -340,7 +427,7 @@ void initScene(int argc, char *argv[])
   glGenVertexArrays(1, &triangleVAO);
   glBindVertexArray(triangleVAO);
   glBindBuffer(GL_ARRAY_BUFFER, vertexPositionAndColorVBO); // The VBO that we bind here will be used in the glVertexAttribPointer calls below. If we forget to bind the VBO here, the program will malfunction.
-
+  */
   // Set up the relationship between the "position" shader variable and the VAO.
   const GLuint locationOfPosition = glGetAttribLocation(pipelineProgram->GetProgramHandle(), "position"); // Obtain a handle to the shader variable "position".
   glEnableVertexAttribArray(locationOfPosition); // Must always enable the vertex attribute. By default, it is disabled.
@@ -351,11 +438,11 @@ void initScene(int argc, char *argv[])
   // Set up the relationship between the "color" shader variable and the VAO.
   const GLuint locationOfColor = glGetAttribLocation(pipelineProgram->GetProgramHandle(), "color"); // Obtain a handle to the shader variable "color".
   glEnableVertexAttribArray(locationOfColor); // Must always enable the vertex attribute. By default, it is disabled.
-  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void *)(unsigned long)numBytesInPositions); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
+  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void *)(unsigned long) (sizeof(float) * pointCoordinates.size())); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
 
   // We don't need this data any more, as we have already uploaded it to the VBO. And so we can destroy it, to avoid a memory leak.
-  free(positions);
-  free(colors);
+ // free(positions);
+ // free(colors);
 
   // Check for any OpenGL errors.
   std::cout << "GL error: " << glGetError() << std::endl;
