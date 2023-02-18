@@ -73,6 +73,9 @@ vector<float> up, down, left, right, centerCoordinates, centerColors;
 OpenGLMatrix matrix;
 BasicPipelineProgram * pipelineProgram;
 
+int imageHeight = 0;
+int imageWidth = 0;
+
 // Write a screenshot to the specified filename.
 void saveScreenshot(const char * filename)
 {
@@ -102,12 +105,19 @@ void displayFunc()
                 0.0, 0.0, 0.0, 
                 0.0, 1.0, 0.0);
 */
-  matrix.LookAt(128, 200, 100,
-      128, 0.0, -128,
+
+  matrix.LookAt(1.0 * imageWidth / 2, 1.0 * imageWidth / 1.25, 1.0 * imageWidth / 5,
+      1.0 * imageWidth / 2, 0.0, -1.0 * imageWidth / 2,
       0.0, 1.0, 0.0);
       
   // In here, you can do additional modeling on the object, such as performing translations, rotations and scales.
   // ...
+
+  matrix.Rotate(terrainRotate[0], 1.0, 0.0, 0.0);
+  matrix.Rotate(terrainRotate[1], 0.0, 1.0, 0.0);
+  matrix.Rotate(terrainRotate[2], 0.0, 0.0, 1.0);
+  matrix.Translate(terrainTranslate[0], terrainTranslate[1], terrainTranslate[2]);
+  matrix.Scale(terrainScale[0], terrainScale[1], terrainScale[2]);
 
   // Read the current modelview and projection matrices.
   float modelViewMatrix[16];
@@ -330,9 +340,10 @@ void keyboardFunc(unsigned char key, int x, int y)
 
 
 void getHeightsFromImage() {
-    int imageHeight = heightmapImage->getHeight();
-    int imageWidth = heightmapImage->getWidth();
+    imageHeight = heightmapImage->getHeight();
+    imageWidth = heightmapImage->getWidth();
     float heightOfVertex;
+    float scale = (1.0 * imageWidth / 128) * 0.1;
     
     for (int i = 0; i < imageWidth; i++) {
         for (int j = 0; j < imageHeight; j++) {
@@ -340,7 +351,7 @@ void getHeightsFromImage() {
 
             //Load x, y, z coordinates of that float into point vector (will be used in VBO)
             pointsCoordinates.push_back((float) i);
-            pointsCoordinates.push_back(heightOfVertex * 0.2);
+            pointsCoordinates.push_back(heightOfVertex * scale);
             pointsCoordinates.push_back((float) -j);
 
             //Load r, g, b, and alpha
@@ -353,7 +364,7 @@ void getHeightsFromImage() {
             if (j < imageHeight - 1) {
                 float heightOfNextVertex = heightmapImage->getPixel(i, j + 1, 0);
                 linesCoordinates.push_back((float)i);
-                linesCoordinates.push_back(heightOfVertex * 0.2);
+                linesCoordinates.push_back(heightOfVertex * scale);
                 linesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
                 linesColors.push_back(heightOfVertex / 255.0);
@@ -362,7 +373,7 @@ void getHeightsFromImage() {
                 linesColors.push_back(1.0);
 
                 linesCoordinates.push_back((float)i);
-                linesCoordinates.push_back(heightOfNextVertex * 0.2);
+                linesCoordinates.push_back(heightOfNextVertex * scale);
                 linesCoordinates.push_back((float)-(j + 1));
                 //Load r, g, b, and alpha
                 linesColors.push_back(heightOfNextVertex / 255.0);
@@ -374,7 +385,7 @@ void getHeightsFromImage() {
             if (i < imageWidth - 1) {
                 float heightOfNextVertex = heightmapImage->getPixel(i + 1, j, 0);
                 linesCoordinates.push_back((float)i);
-                linesCoordinates.push_back(heightOfVertex * 0.2);
+                linesCoordinates.push_back(heightOfVertex * scale);
                 linesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
                 linesColors.push_back(heightOfVertex / 255.0);
@@ -383,7 +394,7 @@ void getHeightsFromImage() {
                 linesColors.push_back(1.0);
 
                 linesCoordinates.push_back((float)(i + 1));
-                linesCoordinates.push_back(heightOfNextVertex * 0.2);
+                linesCoordinates.push_back(heightOfNextVertex * scale);
                 linesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
                 linesColors.push_back(heightOfNextVertex / 255.0);
@@ -398,7 +409,7 @@ void getHeightsFromImage() {
 
                 //Creates bottom left triangle
                 trianglesCoordinates.push_back((float)i);
-                trianglesCoordinates.push_back(heightOfVertex * 0.2);
+                trianglesCoordinates.push_back(heightOfVertex * scale);
                 trianglesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
                 trianglesColors.push_back(heightOfVertex / 255.0);
@@ -407,7 +418,7 @@ void getHeightsFromImage() {
                 trianglesColors.push_back(1.0);
 
                 trianglesCoordinates.push_back((float)i + 1);
-                trianglesCoordinates.push_back(heightOfRightVertex * 0.2);
+                trianglesCoordinates.push_back(heightOfRightVertex * scale);
                 trianglesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
                 trianglesColors.push_back(heightOfRightVertex / 255.0);
@@ -416,7 +427,7 @@ void getHeightsFromImage() {
                 trianglesColors.push_back(1.0);
 
                 trianglesCoordinates.push_back((float)i);
-                trianglesCoordinates.push_back(heightOfUpVertex * 0.2);
+                trianglesCoordinates.push_back(heightOfUpVertex * scale);
                 trianglesCoordinates.push_back((float)-(j + 1));
                 //Load r, g, b, and alpha
                 trianglesColors.push_back(heightOfUpVertex / 255.0);
@@ -426,7 +437,7 @@ void getHeightsFromImage() {
 
                 //Creates top right triangle
                 trianglesCoordinates.push_back((float)(i + 1));
-                trianglesCoordinates.push_back(heightOfUpRightVertex * 0.2);
+                trianglesCoordinates.push_back(heightOfUpRightVertex * scale);
                 trianglesCoordinates.push_back((float)-(j + 1));
                 //Load r, g, b, and alpha
                 trianglesColors.push_back(heightOfUpRightVertex / 255.0);
@@ -435,7 +446,7 @@ void getHeightsFromImage() {
                 trianglesColors.push_back(1.0);
 
                 trianglesCoordinates.push_back((float)i + 1);
-                trianglesCoordinates.push_back(heightOfRightVertex * 0.2);
+                trianglesCoordinates.push_back(heightOfRightVertex * scale);
                 trianglesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
                 trianglesColors.push_back(heightOfRightVertex / 255.0);
@@ -444,7 +455,7 @@ void getHeightsFromImage() {
                 trianglesColors.push_back(1.0);
 
                 trianglesCoordinates.push_back((float)i);
-                trianglesCoordinates.push_back(heightOfUpVertex * 0.2);
+                trianglesCoordinates.push_back(heightOfUpVertex * scale);
                 trianglesCoordinates.push_back((float)-(j + 1));
                 //Load r, g, b, and alpha
                 trianglesColors.push_back(heightOfUpVertex / 255.0);
@@ -453,15 +464,9 @@ void getHeightsFromImage() {
                 trianglesColors.push_back(1.0);
 
                 
-            }
-            //Load x, y, z coordinates of that float into line vector(will be used in VBO)
-            
+            }            
         }
-        
     }
-    cout << pointsCoordinates.size() << endl;
-    cout << linesCoordinates.size() << endl;
-    
 }
 
 void initScene(int argc, char *argv[])
