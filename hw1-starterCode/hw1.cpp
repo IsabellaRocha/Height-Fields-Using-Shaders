@@ -40,7 +40,7 @@ int rightMouseButton = 0; // 1 if pressed, 0 if not
 
 typedef enum { ROTATE, TRANSLATE, SCALE } CONTROL_STATE;
 CONTROL_STATE controlState = ROTATE;
-typedef enum { POINTSMODE, LINESMODE, TRIANGLESMODE, SMOOTHINGMODE } DISPLAY_MODE;
+typedef enum { POINTSMODE, LINESMODE, TRIANGLESMODE, SMOOTHINGMODE, LINESANDTRIANGLESMODE } DISPLAY_MODE;
 DISPLAY_MODE displayMode = POINTSMODE;
 
 // Transformations of the terrain.
@@ -60,11 +60,12 @@ char windowTitle[512] = "CSCI 420 homework I";
 ImageIO * heightmapImage;
 
 // VBO and VAO handles.
-GLuint pointsVAO, linesVAO, trianglesVAO, smoothingVAO;
-GLuint pointsVBO, linesVBO, trianglesVBO, upVBO, downVBO, leftVBO, rightVBO, centerVBO;
+//LinesAndTriangles only hold line coordinates, just all the colors are set to black so it can be seen on top of the object
+GLuint pointsVAO, linesVAO, trianglesVAO, smoothingVAO, linesAndTrianglesVAO;
+GLuint pointsVBO, linesVBO, trianglesVBO, upVBO, downVBO, leftVBO, rightVBO, centerVBO, linesAndTrianglesVBO;
 
 vector<float> pointsCoordinates, pointsColors;
-vector<float> linesCoordinates, linesColors;
+vector<float> linesCoordinates, linesColors, linesAndTrianglesColors;
 vector<float> trianglesCoordinates, trianglesColors;
 vector<float> upCoors, downCoors, leftCoors, rightCoors, centerCoors, centerColors;
 
@@ -165,6 +166,19 @@ void displayFunc()
     case SMOOTHINGMODE:
         glBindVertexArray(smoothingVAO);
         glDrawArrays(GL_TRIANGLES, 0, centerCoors.size() / 3);
+        glBindVertexArray(0);
+        break;
+    case LINESANDTRIANGLESMODE:
+        //Polygon offset is needed so the lines appear slightly above the triangles, otherwise they're constantly intersecting each other
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(1.0f, 1.0f);
+
+        glBindVertexArray(trianglesVAO);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, trianglesCoordinates.size() / 3);
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
+        glBindVertexArray(linesAndTrianglesVAO);
+        glDrawArrays(GL_LINES, 0, linesCoordinates.size() / 3);
         glBindVertexArray(0);
         break;
   }
@@ -343,6 +357,10 @@ void keyboardFunc(unsigned char key, int x, int y)
         glUniform1i(mode, 1);
         glUniform1i(constant, scaleConstant);
         break;
+    case '5':
+        displayMode = LINESANDTRIANGLESMODE;
+        glUniform1i(mode, 0);
+        break;
   }
 }
 
@@ -381,6 +399,11 @@ void getHeightsFromImage() {
                 linesColors.push_back(heightOfVertex / 255.0);
                 linesColors.push_back(1.0);
 
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(1.0);
+
                 linesCoordinates.push_back((float)i);
                 linesCoordinates.push_back(heightOfNextVertex * scale);
                 linesCoordinates.push_back((float)-(j + 1));
@@ -390,6 +413,10 @@ void getHeightsFromImage() {
                 linesColors.push_back(heightOfNextVertex / 255.0);
                 linesColors.push_back(1.0);
 
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(1.0);
             }
             if (i < imageWidth - 1) {
                 float heightOfNextVertex = heightmapImage->getPixel(i + 1, j, 0);
@@ -402,6 +429,11 @@ void getHeightsFromImage() {
                 linesColors.push_back(heightOfVertex / 255.0);
                 linesColors.push_back(1.0);
 
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(1.0);
+
                 linesCoordinates.push_back((float)(i + 1));
                 linesCoordinates.push_back(heightOfNextVertex * scale);
                 linesCoordinates.push_back((float)-j);
@@ -410,6 +442,11 @@ void getHeightsFromImage() {
                 linesColors.push_back(heightOfNextVertex / 255.0);
                 linesColors.push_back(heightOfNextVertex / 255.0);
                 linesColors.push_back(1.0);
+
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(0);
+                linesAndTrianglesColors.push_back(1.0);
             }
             /* Old way when using GL_TRIANGLES, right below this comment is new code for GL_TRIANGLE_STRIP
             if (i < imageWidth - 1 && j < imageHeight - 1) {
@@ -1151,6 +1188,36 @@ void initScene(int argc, char *argv[])
 
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+
+  /*LINEANDTRIANGLES VBOS AND VAOS*/
+  // Create the VBOs. There is a single VBO in this example. This operation must be performed BEFORE we initialize any VAOs.
+  glGenBuffers(1, &linesAndTrianglesVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, linesAndTrianglesVBO);
+  // First, allocate an empty VBO of the correct size to hold positions and colors.
+  int numBytesLinesAndTrianglesCoordinates = sizeof(float) * linesCoordinates.size();
+  int numBytesLinesAndTrianglesColors = sizeof(float) * linesAndTrianglesColors.size();
+  glBufferData(GL_ARRAY_BUFFER, numBytesLinesAndTrianglesCoordinates + numBytesLinesAndTrianglesColors, nullptr, GL_STATIC_DRAW);
+  // Next, write the position and color data into the VBO.
+  glBufferSubData(GL_ARRAY_BUFFER, 0, numBytesLinesAndTrianglesCoordinates, (float*)linesCoordinates.data());
+  glBufferSubData(GL_ARRAY_BUFFER, numBytesLinesAndTrianglesCoordinates, numBytesLinesAndTrianglesColors, (float*)linesAndTrianglesColors.data());
+  // Create the VAOs. There is a single VAO in this example.
+  glGenVertexArrays(1, &linesAndTrianglesVAO);
+  glBindVertexArray(linesAndTrianglesVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, linesAndTrianglesVBO);
+
+  // Set up the relationship between the "position" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfPosition); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfPosition, 3, GL_FLOAT, normalized, stride, (const void*)0); // The shader variable "position" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset 0 in the VBO. There are 3 float entries per vertex in the VBO (i.e., x,y,z coordinates). 
+
+  // Set up the relationship between the "color" shader variable and the VAO.
+  glEnableVertexAttribArray(locationOfColor); // Must always enable the vertex attribute. By default, it is disabled.
+  glVertexAttribPointer(locationOfColor, 4, GL_FLOAT, normalized, stride, (const void*)(unsigned long)numBytesLinesAndTrianglesCoordinates); // The shader variable "color" receives its data from the currently bound VBO (i.e., vertexPositionAndColorVBO), starting from offset "numBytesInPositions" in the VBO. There are 4 float entries per vertex in the VBO (i.e., r,g,b,a channels). 
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0); //Unbind in order to do triangles next
+
 
   // Check for any OpenGL errors.
   std::cout << "GL error: " << glGetError() << std::endl;
