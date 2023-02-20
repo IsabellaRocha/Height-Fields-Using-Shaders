@@ -4,168 +4,259 @@ C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assig
 C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(109,81): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(109,56): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(109,34): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(346,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(358,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(353,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(354,27): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(366,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(359,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(367,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(360,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(368,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(370,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(378,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(371,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(379,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(372,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(380,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(379,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(387,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(380,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(388,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(381,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(389,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(391,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(399,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(392,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(400,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(393,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(401,54): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(400,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(408,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(401,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(409,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(402,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(410,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(415,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(423,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(416,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(424,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(417,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(425,58): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(424,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(432,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(425,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(433,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(426,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(434,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(433,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(441,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(434,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(442,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(435,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(443,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(443,65): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(451,65): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(444,65): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(452,65): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(445,65): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(453,65): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(452,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(460,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(453,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(461,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(454,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(462,63): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(461,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(469,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(462,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(470,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(463,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(471,60): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(494,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(495,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(496,51): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(559,56): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(560,56): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(561,47): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(623,53): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(624,53): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(625,53): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(689,49): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(690,49): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(691,49): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(755,56): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(756,56): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(757,56): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(818,53): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(819,53): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\imr84\OneDrive\Desktop\csci420\assign1_coreOpenGL_starterCode (2)\assign1_coreOpenGL_starterCode\hw1-starterCode\hw1.cpp(820,53): warning C4244: 'argument': conversion from 'double' to '_Ty', possible loss of data
           with
           [
               _Ty=float
