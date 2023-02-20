@@ -159,7 +159,7 @@ void displayFunc()
         break;
     case TRIANGLESMODE:
         glBindVertexArray(trianglesVAO);
-        glDrawArrays(GL_TRIANGLES, 0, trianglesCoordinates.size() / 3);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, trianglesCoordinates.size() / 3);
         glBindVertexArray(0);
         break;
     case SMOOTHINGMODE:
@@ -411,6 +411,7 @@ void getHeightsFromImage() {
                 linesColors.push_back(heightOfNextVertex / 255.0);
                 linesColors.push_back(1.0);
             }
+            /* Old way when using GL_TRIANGLES, right below this comment is new code for GL_TRIANGLE_STRIP
             if (i < imageWidth - 1 && j < imageHeight - 1) {
                 float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
                 float heightOfUpVertex = heightmapImage->getPixel(i, j + 1, 0);
@@ -471,9 +472,87 @@ void getHeightsFromImage() {
                 trianglesColors.push_back(heightOfUpVertex / 255.0);
                 trianglesColors.push_back(heightOfUpVertex / 255.0);
                 trianglesColors.push_back(1.0);
-            } 
+            } */
 		}
     }
+    //Add starting vertex
+    heightOfVertex = heightmapImage->getPixel(0, 0, 0);
+    trianglesCoordinates.push_back((float)0);
+    trianglesCoordinates.push_back(heightOfVertex* scale);
+    trianglesCoordinates.push_back((float)0);
+    //Load r, g, b, and alpha
+    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(1.0);
+    //Use a snaking pattern to avoid triangles spanning across the whole image
+    for (int i = 0; i < imageWidth - 1; i++) {
+        if (i % 2 == 0) {
+            for (int j = 0; j < imageHeight - 1; j++) {
+                float heightOfVertex = heightmapImage->getPixel(i, j, 0);
+                float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
+                float heightOfUpVertex = heightmapImage->getPixel(i, j + 1, 0);
+
+                trianglesCoordinates.push_back((float)i + 1);
+                trianglesCoordinates.push_back(heightOfRightVertex * scale);
+                trianglesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                trianglesCoordinates.push_back((float)i);
+                trianglesCoordinates.push_back(heightOfUpVertex * scale);
+                trianglesCoordinates.push_back((float)-(j + 1));
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+            }
+        }
+        else {
+            for (int j = imageHeight - 1; j > 0; j--) {
+                float heightOfVertex = heightmapImage->getPixel(i, j, 0);
+                float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
+                float heightOfDownVertex = heightmapImage->getPixel(i, j - 1, 0);
+
+                trianglesCoordinates.push_back((float)i + 1);
+                trianglesCoordinates.push_back(heightOfRightVertex * scale);
+                trianglesCoordinates.push_back((float)-j);
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+                trianglesCoordinates.push_back((float)i);
+                trianglesCoordinates.push_back(heightOfDownVertex * scale);
+                trianglesCoordinates.push_back((float)-(j - 1));
+                //Load r, g, b, and alpha
+                trianglesColors.push_back(heightOfDownVertex / 255.0);
+                trianglesColors.push_back(heightOfDownVertex / 255.0);
+                trianglesColors.push_back(heightOfDownVertex / 255.0);
+                trianglesColors.push_back(1.0);
+
+            }
+        }
+    }
+    //Add ending vertex
+    heightOfVertex = heightmapImage->getPixel(imageWidth - 1, imageHeight - 1, 0);
+    trianglesCoordinates.push_back((float)(imageWidth - 1));
+    trianglesCoordinates.push_back(heightOfVertex* scale);
+    trianglesCoordinates.push_back((float)-(imageHeight - 1));
+    //Load r, g, b, and alpha
+    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(1.0);
+
+
+
     for (int i = 0; i < imageWidth - 1; i++) {
         for (int j = 0; j < imageHeight - 1; j++) {
             heightOfVertex = heightmapImage->getPixel(i, j, 0);
