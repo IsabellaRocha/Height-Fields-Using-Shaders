@@ -19,5 +19,6 @@ This assignment was written on a Windows device using Visual Studio 2019. To cha
 ### Extra features implemented
 - The image was reflected such that its orientation matches the original input image instead of rendering its mirror image
 - A constant which scales continuously based on the image size was added to the smoothing equation to get rid of extra white triangles
+- Solid mode uses GL_TRIANGLE_STRIP instead of GL_TRIANGLES
 - A fifth mode in which the wireframe appears in black over the solid object was added
 - Handling of colored images was added (Sample images are in the heightmap folder titled color_1.jpg, color_2.jpg, and color_3.jpg)
