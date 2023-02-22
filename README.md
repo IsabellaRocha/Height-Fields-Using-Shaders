@@ -8,7 +8,7 @@ This assignment was written on a Windows device using Visual Studio 2019. To cha
 - The rendering has 5 modes available
   - Click '1': Points mode
   - Click '2': Lines mode
-  - Click '3': Solid mode
+  - Click '3': Solid triangle mode
   - Click '4': Smoothing mode
   - Click '5': Lines and solid mode (extra)
 - Click 'x': Takes a screenshot
@@ -20,6 +20,11 @@ This assignment was written on a Windows device using Visual Studio 2019. To cha
 ### Extra features implemented
 - The image was reflected such that its orientation matches the original input image instead of rendering its mirror image
 - A constant which scales continuously based on the image size was added to the smoothing equation to get rid of extra white triangles
-- Solid mode uses GL_TRIANGLE_STRIP instead of GL_TRIANGLES
+- Solid triangle mode uses GL_TRIANGLE_STRIP instead of GL_TRIANGLES
 - A fifth mode in which the wireframe appears in black over the solid object was added
 - Handling of colored images was added (Sample images are in the heightmap folder titled color_1.jpg, color_2.jpg, and color_3.jpg)
+
+#### Notes about animation
+- The animation first begins by rotating around the x and y axis for 200 frames
+- During these 200 frames, all 5 modes are displayed, with 40 frames being allotted for each mode
+- During the last 100 frames, translation and scaling are displayed while in solid mode
