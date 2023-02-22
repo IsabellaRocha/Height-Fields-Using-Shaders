@@ -78,6 +78,15 @@ int imageWidth = 0;
 //Used for color correcting in smoothing mode to avoid white spikes
 int scaleConstant = 1;
 
+//Used to handle colored images
+struct ColorAndHeight {
+    float height;
+    float red;
+    float green;
+    float blue;
+};
+
+
 // Write a screenshot to the specified filename.
 void saveScreenshot(const char * filename)
 {
@@ -364,39 +373,63 @@ void keyboardFunc(unsigned char key, int x, int y)
   }
 }
 
+//Use formula Grayscale = 0.299R + 0.587G + 0.114B from https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/
+ColorAndHeight getHeightFromColor(int i, int j, bool blackAndWhiteImage) {
+    ColorAndHeight pixel;
+    if (blackAndWhiteImage) {
+        float heightOfVertex = heightmapImage->getPixel(i, j, 0);
+        pixel.height = heightOfVertex;
+        pixel.red = heightOfVertex;
+        pixel.green = heightOfVertex;
+        pixel.blue = heightOfVertex;
+    }
+    else {
+        float red = heightmapImage->getPixel(i, j, 0);
+        float green = heightmapImage->getPixel(i, j, 1);
+        float blue = heightmapImage->getPixel(i, j, 2);
+
+        pixel.red = red;
+        pixel.green = green;
+        pixel.blue = blue;
+        pixel.height = 0.299 * red + 0.587 * green + 0.114 * blue;
+    }
+    return pixel;
+}
 
 void getHeightsFromImage() {
     imageHeight = heightmapImage->getHeight();
     imageWidth = heightmapImage->getWidth();
-    float heightOfVertex;
+    
     float scale = (1.0 * imageWidth / 128) * 0.1;
     scaleConstant = scale * 300;
+
+    bool blackAndWhiteImage = heightmapImage->getBytesPerPixel() == 1;
     
     for (int i = 0; i < imageWidth; i++) {
         for (int j = 0; j < imageHeight; j++) {
-            heightOfVertex = heightmapImage->getPixel(i, j, 0);
+            ColorAndHeight heightOfVertex = getHeightFromColor(i, j, blackAndWhiteImage);
 
             //Load x, y, z coordinates of that float into point vector (will be used in VBO)
             pointsCoordinates.push_back((float) i);
-            pointsCoordinates.push_back(heightOfVertex * scale);
+            pointsCoordinates.push_back(heightOfVertex.height * scale);
             pointsCoordinates.push_back((float) -j);
 
             //Load r, g, b, and alpha
-            pointsColors.push_back(heightOfVertex / 255.0);
-            pointsColors.push_back(heightOfVertex / 255.0);
-            pointsColors.push_back(heightOfVertex / 255.0);
+            pointsColors.push_back(heightOfVertex.red / 255.0);
+            pointsColors.push_back(heightOfVertex.green / 255.0);
+            pointsColors.push_back(heightOfVertex.blue / 255.0);
             pointsColors.push_back(1.0);
 
             //Make sure you're not looking at point off the image/out of bounds check
             if (j < imageHeight - 1) {
-                float heightOfNextVertex = heightmapImage->getPixel(i, j + 1, 0);
+                ColorAndHeight heightOfNextVertex = getHeightFromColor(i, j + 1, blackAndWhiteImage);
                 linesCoordinates.push_back((float)i);
-                linesCoordinates.push_back(heightOfVertex * scale);
+                linesCoordinates.push_back(heightOfVertex.height * scale);
                 linesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
-                linesColors.push_back(heightOfVertex / 255.0);
-                linesColors.push_back(heightOfVertex / 255.0);
-                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(heightOfVertex.red / 255.0);
+                linesColors.push_back(heightOfVertex.green / 255.0);
+                linesColors.push_back(heightOfVertex.blue / 255.0);
                 linesColors.push_back(1.0);
 
                 linesAndTrianglesColors.push_back(0);
@@ -405,12 +438,12 @@ void getHeightsFromImage() {
                 linesAndTrianglesColors.push_back(1.0);
 
                 linesCoordinates.push_back((float)i);
-                linesCoordinates.push_back(heightOfNextVertex * scale);
+                linesCoordinates.push_back(heightOfNextVertex.height * scale);
                 linesCoordinates.push_back((float)-(j + 1));
                 //Load r, g, b, and alpha
-                linesColors.push_back(heightOfNextVertex / 255.0);
-                linesColors.push_back(heightOfNextVertex / 255.0);
-                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(heightOfNextVertex.red / 255.0);
+                linesColors.push_back(heightOfNextVertex.green / 255.0);
+                linesColors.push_back(heightOfNextVertex.blue / 255.0);
                 linesColors.push_back(1.0);
 
                 linesAndTrianglesColors.push_back(0);
@@ -419,14 +452,14 @@ void getHeightsFromImage() {
                 linesAndTrianglesColors.push_back(1.0);
             }
             if (i < imageWidth - 1) {
-                float heightOfNextVertex = heightmapImage->getPixel(i + 1, j, 0);
+                ColorAndHeight heightOfNextVertex = getHeightFromColor(i + 1, j, blackAndWhiteImage);
                 linesCoordinates.push_back((float)i);
-                linesCoordinates.push_back(heightOfVertex * scale);
+                linesCoordinates.push_back(heightOfVertex.height * scale);
                 linesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
-                linesColors.push_back(heightOfVertex / 255.0);
-                linesColors.push_back(heightOfVertex / 255.0);
-                linesColors.push_back(heightOfVertex / 255.0);
+                linesColors.push_back(heightOfVertex.red / 255.0);
+                linesColors.push_back(heightOfVertex.green / 255.0);
+                linesColors.push_back(heightOfVertex.blue / 255.0);
                 linesColors.push_back(1.0);
 
                 linesAndTrianglesColors.push_back(0);
@@ -435,12 +468,12 @@ void getHeightsFromImage() {
                 linesAndTrianglesColors.push_back(1.0);
 
                 linesCoordinates.push_back((float)(i + 1));
-                linesCoordinates.push_back(heightOfNextVertex * scale);
+                linesCoordinates.push_back(heightOfNextVertex.height * scale);
                 linesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
-                linesColors.push_back(heightOfNextVertex / 255.0);
-                linesColors.push_back(heightOfNextVertex / 255.0);
-                linesColors.push_back(heightOfNextVertex / 255.0);
+                linesColors.push_back(heightOfNextVertex.red / 255.0);
+                linesColors.push_back(heightOfNextVertex.green / 255.0);
+                linesColors.push_back(heightOfNextVertex.blue / 255.0);
                 linesColors.push_back(1.0);
 
                 linesAndTrianglesColors.push_back(0);
@@ -513,352 +546,352 @@ void getHeightsFromImage() {
 		}
     }
     //Add starting vertex
-    heightOfVertex = heightmapImage->getPixel(0, 0, 0);
+    ColorAndHeight heightOfVertex = getHeightFromColor(0, 0, blackAndWhiteImage);
     trianglesCoordinates.push_back((float)0);
-    trianglesCoordinates.push_back(heightOfVertex* scale);
+    trianglesCoordinates.push_back(heightOfVertex.height * scale);
     trianglesCoordinates.push_back((float)0);
     //Load r, g, b, and alpha
-    trianglesColors.push_back(heightOfVertex / 255.0);
-    trianglesColors.push_back(heightOfVertex / 255.0);
-    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(heightOfVertex.red / 255.0);
+    trianglesColors.push_back(heightOfVertex.green / 255.0);
+    trianglesColors.push_back(heightOfVertex.blue / 255.0);
     trianglesColors.push_back(1.0);
     //Use a snaking pattern to avoid triangles spanning across the whole image
     for (int i = 0; i < imageWidth - 1; i++) {
         if (i % 2 == 0) {
             for (int j = 0; j < imageHeight - 1; j++) {
-                float heightOfVertex = heightmapImage->getPixel(i, j, 0);
-                float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
-                float heightOfUpVertex = heightmapImage->getPixel(i, j + 1, 0);
+                heightOfVertex = getHeightFromColor(i, j, blackAndWhiteImage);
+                ColorAndHeight heightOfRightVertex = getHeightFromColor(i + 1, j, blackAndWhiteImage);
+                ColorAndHeight heightOfUpVertex = getHeightFromColor(i, j + 1, blackAndWhiteImage);
 
                 trianglesCoordinates.push_back((float)i + 1);
-                trianglesCoordinates.push_back(heightOfRightVertex * scale);
+                trianglesCoordinates.push_back(heightOfRightVertex.height * scale);
                 trianglesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
-                trianglesColors.push_back(heightOfRightVertex / 255.0);
-                trianglesColors.push_back(heightOfRightVertex / 255.0);
-                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex.red / 255.0);
+                trianglesColors.push_back(heightOfRightVertex.green / 255.0);
+                trianglesColors.push_back(heightOfRightVertex.blue / 255.0);
                 trianglesColors.push_back(1.0);
 
                 trianglesCoordinates.push_back((float)i);
-                trianglesCoordinates.push_back(heightOfUpVertex * scale);
+                trianglesCoordinates.push_back(heightOfUpVertex.height * scale);
                 trianglesCoordinates.push_back((float)-(j + 1));
                 //Load r, g, b, and alpha
-                trianglesColors.push_back(heightOfUpVertex / 255.0);
-                trianglesColors.push_back(heightOfUpVertex / 255.0);
-                trianglesColors.push_back(heightOfUpVertex / 255.0);
+                trianglesColors.push_back(heightOfUpVertex.red / 255.0);
+                trianglesColors.push_back(heightOfUpVertex.green / 255.0);
+                trianglesColors.push_back(heightOfUpVertex.blue / 255.0);
                 trianglesColors.push_back(1.0);
 
             }
         }
         else {
             for (int j = imageHeight - 1; j > 0; j--) {
-                float heightOfVertex = heightmapImage->getPixel(i, j, 0);
-                float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
-                float heightOfDownVertex = heightmapImage->getPixel(i, j - 1, 0);
+                heightOfVertex = getHeightFromColor(i, j, blackAndWhiteImage);
+                ColorAndHeight heightOfRightVertex = getHeightFromColor(i + 1, j, blackAndWhiteImage);
+                ColorAndHeight heightOfDownVertex = getHeightFromColor(i, j - 1, blackAndWhiteImage);
 
                 trianglesCoordinates.push_back((float)i + 1);
-                trianglesCoordinates.push_back(heightOfRightVertex * scale);
+                trianglesCoordinates.push_back(heightOfRightVertex.height * scale);
                 trianglesCoordinates.push_back((float)-j);
                 //Load r, g, b, and alpha
-                trianglesColors.push_back(heightOfRightVertex / 255.0);
-                trianglesColors.push_back(heightOfRightVertex / 255.0);
-                trianglesColors.push_back(heightOfRightVertex / 255.0);
+                trianglesColors.push_back(heightOfRightVertex.red / 255.0);
+                trianglesColors.push_back(heightOfRightVertex.green / 255.0);
+                trianglesColors.push_back(heightOfRightVertex.blue / 255.0);
                 trianglesColors.push_back(1.0);
 
                 trianglesCoordinates.push_back((float)i);
-                trianglesCoordinates.push_back(heightOfDownVertex * scale);
+                trianglesCoordinates.push_back(heightOfDownVertex.height * scale);
                 trianglesCoordinates.push_back((float)-(j - 1));
                 //Load r, g, b, and alpha
-                trianglesColors.push_back(heightOfDownVertex / 255.0);
-                trianglesColors.push_back(heightOfDownVertex / 255.0);
-                trianglesColors.push_back(heightOfDownVertex / 255.0);
+                trianglesColors.push_back(heightOfDownVertex.red / 255.0);
+                trianglesColors.push_back(heightOfDownVertex.green / 255.0);
+                trianglesColors.push_back(heightOfDownVertex.blue / 255.0);
                 trianglesColors.push_back(1.0);
 
             }
         }
     }
     //Add ending vertex
-    heightOfVertex = heightmapImage->getPixel(imageWidth - 1, imageHeight - 1, 0);
+    heightOfVertex = getHeightFromColor(imageWidth - 1, imageHeight - 1, blackAndWhiteImage);;
     trianglesCoordinates.push_back((float)(imageWidth - 1));
-    trianglesCoordinates.push_back(heightOfVertex* scale);
+    trianglesCoordinates.push_back(heightOfVertex.height * scale);
     trianglesCoordinates.push_back((float)-(imageHeight - 1));
     //Load r, g, b, and alpha
-    trianglesColors.push_back(heightOfVertex / 255.0);
-    trianglesColors.push_back(heightOfVertex / 255.0);
-    trianglesColors.push_back(heightOfVertex / 255.0);
+    trianglesColors.push_back(heightOfVertex.red / 255.0);
+    trianglesColors.push_back(heightOfVertex.green / 255.0);
+    trianglesColors.push_back(heightOfVertex.blue / 255.0);
     trianglesColors.push_back(1.0);
 
 
 
     for (int i = 0; i < imageWidth - 1; i++) {
         for (int j = 0; j < imageHeight - 1; j++) {
-            heightOfVertex = heightmapImage->getPixel(i, j, 0);
-            float heightOfRightVertex = heightmapImage->getPixel(i + 1, j, 0);
-            float heightOfUpVertex = heightmapImage->getPixel(i, j + 1, 0);
-            float heightOfUpRightVertex = heightmapImage->getPixel(i + 1, j + 1, 0);
-            
-            //Variables used when adding to up, left, right, and down vectors
-            float heightOfRight = 0;
-            float heightOfLeft = 0;
-            float heightOfUp = 0;
-            float heightOfDown = 0;
+            heightOfVertex = getHeightFromColor(i, j, blackAndWhiteImage);
+            ColorAndHeight heightOfRightVertex = getHeightFromColor(i + 1, j, blackAndWhiteImage);
+            ColorAndHeight heightOfUpVertex = getHeightFromColor(i, j + 1, blackAndWhiteImage);
+            ColorAndHeight heightOfUpRightVertex = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+
+            //Variables used when adding to up, left, right, and down vectors for smoothing
+            ColorAndHeight heightOfRight;
+            ColorAndHeight heightOfLeft;
+            ColorAndHeight heightOfUp;
+            ColorAndHeight heightOfDown;
 
             //Adding current coordinate
             centerCoors.push_back((float)i);
-            centerCoors.push_back(heightOfVertex * scale);
+            centerCoors.push_back(heightOfVertex.height * scale);
             centerCoors.push_back((float)-j);
 
-            centerColors.push_back(heightOfVertex / 255.0);
-            centerColors.push_back(heightOfVertex / 255.0);
-            centerColors.push_back(heightOfVertex / 255.0);
+            centerColors.push_back(heightOfVertex.red / 255.0);
+            centerColors.push_back(heightOfVertex.green / 255.0);
+            centerColors.push_back(heightOfVertex.blue / 255.0);
             centerColors.push_back(0);
 
             //If all the way on left
             if (i == 0) {
-                heightOfRight = heightmapImage->getPixel(i + 1, j, 0);
-                heightOfLeft = heightOfRight;
+                heightOfRight = getHeightFromColor(i + 1, j, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i + 1, j, blackAndWhiteImage);;
 
                 rightCoors.push_back((float)(i + 1));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-j);
 
                 leftCoors.push_back((float)(i + 1));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-j);
 
             }
             else {
-                heightOfRight = heightmapImage->getPixel(i + 1, j, 0);
-                heightOfLeft = heightmapImage->getPixel(i - 1, j, 0);
+                heightOfRight = getHeightFromColor(i + 1, j, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i - 1, j, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 1));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-j);
 
                 leftCoors.push_back((float)(i - 1));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-j);
 
             }
             //If all the way at the bottom
             if (j == 0) {
-                heightOfUp = heightmapImage->getPixel(i, j + 1, 0);
-                heightOfDown = heightOfUp;
+                heightOfUp = getHeightFromColor(i, j + 1, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i, j + 1, blackAndWhiteImage);
 
                 upCoors.push_back((float)i);
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 1));
 
                 downCoors.push_back((float)i);
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j + 1));
 
             }
             else {
-                heightOfUp = heightmapImage->getPixel(i, j + 1, 0);
-                heightOfDown = heightmapImage->getPixel(i, j - 1, 0);
+                heightOfUp = getHeightFromColor(i, j + 1, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i, j - 1, blackAndWhiteImage);
 
                 upCoors.push_back((float)i);
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 1));
 
                 downCoors.push_back((float)i);
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j - 1));
 
             }
 
             //Adding right coordinate
             centerCoors.push_back((float)(i + 1));
-            centerCoors.push_back(heightOfRightVertex * scale);
+            centerCoors.push_back(heightOfRightVertex.height * scale);
             centerCoors.push_back((float)-j);
 
-            centerColors.push_back(heightOfRightVertex / 255.0);
-            centerColors.push_back(heightOfRightVertex / 255.0);
-			centerColors.push_back(heightOfRightVertex / 255.0);
+            centerColors.push_back(heightOfRightVertex.red / 255.0);
+            centerColors.push_back(heightOfRightVertex.green / 255.0);
+			centerColors.push_back(heightOfRightVertex.blue / 255.0);
 			centerColors.push_back(0);
 
             //If all the way to the right
             if ((i + 1) == imageWidth - 1) {
-                heightOfLeft = heightmapImage->getPixel(i, j, 0);
-                heightOfRight = heightOfLeft;
+                heightOfLeft = getHeightFromColor(i, j, blackAndWhiteImage);
+                heightOfRight = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i));
-                rightCoors.push_back(heightOfRight* scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-j);
 
                 leftCoors.push_back((float)(i));
-                leftCoors.push_back(heightOfLeft* scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-j);
             }
             else {
-                heightOfRight = heightmapImage->getPixel(i + 2, j, 0);
-                heightOfLeft = heightmapImage->getPixel(i, j, 0);
+                heightOfRight = getHeightFromColor(i + 2, j, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 2));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-j);
 
                 leftCoors.push_back((float)(i));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-j);
             }
             
             //If all the way at bottom
             if (j == 0) {
-                heightOfUp = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfDown = heightOfUp;
+                heightOfUp = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
 
                 upCoors.push_back((float)(i + 1));
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 1));
 
                 downCoors.push_back((float)(i + 1));
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j + 1));
 
             }
             else {
-                heightOfUp = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfDown = heightmapImage->getPixel(i + 1, j - 1, 0);
+                heightOfUp = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i + 1, j - 1, blackAndWhiteImage);
 
                 upCoors.push_back((float)(i + 1));
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 1));
 
                 downCoors.push_back((float)(i + 1));
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j - 1));
 
             }
 
             //Adding up coordinate
             centerCoors.push_back((float)i);
-            centerCoors.push_back(heightOfUpVertex * scale);
+            centerCoors.push_back(heightOfUpVertex.height * scale);
             centerCoors.push_back((float)-(j + 1));
 
-            centerColors.push_back(heightOfUpVertex / 255.0);
-            centerColors.push_back(heightOfUpVertex / 255.0);
-            centerColors.push_back(heightOfUpVertex / 255.0);
+            centerColors.push_back(heightOfUpVertex.red / 255.0);
+            centerColors.push_back(heightOfUpVertex.green / 255.0);
+            centerColors.push_back(heightOfUpVertex.blue / 255.0);
             centerColors.push_back(0);
 
             //If all the way on the left
             if (i == 0) {
-                heightOfRight = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfLeft = heightOfRight;
+                heightOfRight = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 1));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-(j + 1));
 
                 leftCoors.push_back((float)(i + 1));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-(j + 1));
 
             }
             else {
-                heightOfRight = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfLeft = heightmapImage->getPixel(i - 1, j + 1, 0);
+                heightOfRight = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i - 1, j + 1, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 1));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-(j + 1));
 
                 leftCoors.push_back((float)(i - 1));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-(j + 1));
 
 			}
 
             //If all the way at the top
             if (j + 1 == imageHeight - 1) {
-                heightOfDown = heightmapImage->getPixel(i, j, 0);
-                heightOfUp = heightOfDown;
+                heightOfDown = getHeightFromColor(i, j, blackAndWhiteImage);
+                heightOfUp = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 upCoors.push_back((float)i);
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j));
 
                 downCoors.push_back((float)i);
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j));
 
             }
             else {
-                heightOfUp = heightmapImage->getPixel(i, j + 2, 0);
-                heightOfDown = heightmapImage->getPixel(i, j, 0);
+                heightOfUp = getHeightFromColor(i, j + 2, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 upCoors.push_back((float)i);
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 2));
 
                 downCoors.push_back((float)i);
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j));
 
             }
 			
             //Adding upper right coordinate
 			centerCoors.push_back((float)(i + 1));
-			centerCoors.push_back(heightOfUpRightVertex* scale);
+			centerCoors.push_back(heightOfUpRightVertex.height * scale);
 			centerCoors.push_back((float)-(j + 1));
 
-			centerColors.push_back(heightOfUpRightVertex / 255.0);
-			centerColors.push_back(heightOfUpRightVertex / 255.0);
-			centerColors.push_back(heightOfUpRightVertex / 255.0);
+			centerColors.push_back(heightOfUpRightVertex.red / 255.0);
+			centerColors.push_back(heightOfUpRightVertex.green / 255.0);
+			centerColors.push_back(heightOfUpRightVertex.blue / 255.0);
 			centerColors.push_back(0);
 
             //If all the way to the right
             if ((i + 1) == imageWidth - 1) {
-                heightOfLeft = heightmapImage->getPixel(i, j + 1, 0);
-                heightOfRight = heightOfLeft;
+                heightOfLeft = getHeightFromColor(i, j + 1, blackAndWhiteImage);
+                heightOfRight = getHeightFromColor(i, j + 1, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-(j + 1));
 
                 leftCoors.push_back((float)(i));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-(j + 1));
             }
             else {
-                heightOfRight = heightmapImage->getPixel(i + 2, j + 1, 0);
-                heightOfLeft = heightmapImage->getPixel(i, j + 1, 0);
+                heightOfRight = getHeightFromColor(i + 2, j + 1, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i, j + 1, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 2));
-                rightCoors.push_back(heightOfRight* scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-(j + 1));
 
                 leftCoors.push_back((float)(i));
-                leftCoors.push_back(heightOfLeft* scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-(j + 1));
 
             }
 
             //If all the way at the top
             if (j + 1 == imageHeight - 1) {
-                heightOfDown = heightmapImage->getPixel(i + 1, j, 0);
-                heightOfUp = heightOfDown;
+                heightOfDown = getHeightFromColor(i + 1, j, blackAndWhiteImage);
+                heightOfUp = getHeightFromColor(i + 1, j, blackAndWhiteImage);
 
                 upCoors.push_back((float)(i + 1));
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j));
 
                 downCoors.push_back((float)(i + 1));
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j));
 
             }
             else {
-                heightOfUp = heightmapImage->getPixel(i + 1, j + 2, 0);
-                heightOfDown = heightmapImage->getPixel(i + 1, j, 0);
+                heightOfUp = getHeightFromColor(i + 1, j + 2, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i + 1, j, blackAndWhiteImage);
 
                 upCoors.push_back((float)(i + 1));
-                upCoors.push_back(heightOfUp* scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 2));
 
                 downCoors.push_back((float)(i + 1));
-                downCoors.push_back(heightOfDown* scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j));
 
             }
@@ -866,142 +899,133 @@ void getHeightsFromImage() {
 			
             //Adding right coordinate
 			centerCoors.push_back((float)(i + 1));
-			centerCoors.push_back(heightOfRightVertex * scale);
+			centerCoors.push_back(heightOfRightVertex.height * scale);
 			centerCoors.push_back((float)-j);
 
-            centerColors.push_back(heightOfRightVertex / 255.0);
-            centerColors.push_back(heightOfRightVertex / 255.0);
-            centerColors.push_back(heightOfRightVertex / 255.0);
+            centerColors.push_back(heightOfRightVertex.red / 255.0);
+            centerColors.push_back(heightOfRightVertex.green / 255.0);
+            centerColors.push_back(heightOfRightVertex.blue / 255.0);
             centerColors.push_back(0);
 
             //If all the way to the right
             if ((i + 1) == imageWidth - 1) {
-                heightOfLeft = heightmapImage->getPixel(i, j, 0);
-                heightOfRight = heightOfLeft;
+                heightOfLeft = getHeightFromColor(i, j, blackAndWhiteImage);
+                heightOfRight = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-j);
 
                 leftCoors.push_back((float)(i));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-j);
             }
             else {
-                heightOfRight = heightmapImage->getPixel(i + 2, j, 0);
-                heightOfLeft = heightmapImage->getPixel(i, j, 0);
+                heightOfRight = getHeightFromColor(i + 2, j, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 2));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-j);
 
                 leftCoors.push_back((float)(i));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-j);
             }
             //If all the way on bottom
             if (j == 0) {
-                heightOfUp = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfDown = heightOfUp;
+                heightOfUp = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
 
                 upCoors.push_back((float)(i + 1));
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 1));
 
                 downCoors.push_back((float)(i + 1));
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j + 1));
 
             }
             else {
-                heightOfUp = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfDown = heightmapImage->getPixel(i + 1, j - 1, 0);
+                heightOfUp = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i + 1, j - 1, blackAndWhiteImage);
 
                 upCoors.push_back((float)(i + 1));
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 1));
 
                 downCoors.push_back((float)(i + 1));
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j - 1));
 
             }
 
             //Adding upper coordinate
             centerCoors.push_back((float)i);
-            centerCoors.push_back(heightOfUpVertex * scale);
+            centerCoors.push_back(heightOfUpVertex.height * scale);
             centerCoors.push_back((float)-(j + 1));
 
-            centerColors.push_back(heightOfUpVertex / 255.0);
-            centerColors.push_back(heightOfUpVertex / 255.0);
-            centerColors.push_back(heightOfUpVertex / 255.0);
+            centerColors.push_back(heightOfUpVertex.red / 255.0);
+            centerColors.push_back(heightOfUpVertex.green / 255.0);
+            centerColors.push_back(heightOfUpVertex.blue / 255.0);
             centerColors.push_back(0);
 
             //If all the way on the left
             if (i == 0) {
-                heightOfRight = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfLeft = heightOfRight;
+                heightOfRight = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 1));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-(j + 1));
 
                 leftCoors.push_back((float)(i + 1));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-(j + 1));
 
             }
             else {
-                heightOfRight = heightmapImage->getPixel(i + 1, j + 1, 0);
-                heightOfLeft = heightmapImage->getPixel(i - 1, j + 1, 0);
+                heightOfRight = getHeightFromColor(i + 1, j + 1, blackAndWhiteImage);
+                heightOfLeft = getHeightFromColor(i - 1, j + 1, blackAndWhiteImage);
 
                 rightCoors.push_back((float)(i + 1));
-                rightCoors.push_back(heightOfRight * scale);
+                rightCoors.push_back(heightOfRight.height * scale);
                 rightCoors.push_back((float)-(j + 1));
 
                 leftCoors.push_back((float)(i - 1));
-                leftCoors.push_back(heightOfLeft * scale);
+                leftCoors.push_back(heightOfLeft.height * scale);
                 leftCoors.push_back((float)-(j + 1));
 
 			}
 
             //If all the way at the top
             if (j + 1 == imageHeight - 1) {
-                heightOfDown = heightmapImage->getPixel(i, j, 0);
-                heightOfUp = heightOfDown;
+                heightOfDown = getHeightFromColor(i, j, blackAndWhiteImage);
+                heightOfUp = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 upCoors.push_back((float)i);
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j));
 
                 downCoors.push_back((float)i);
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j));
             }
             else {
-                heightOfUp = heightmapImage->getPixel(i, j + 2, 0);
-                heightOfDown = heightmapImage->getPixel(i, j, 0);
+                heightOfUp = getHeightFromColor(i, j + 2, blackAndWhiteImage);
+                heightOfDown = getHeightFromColor(i, j, blackAndWhiteImage);
 
                 upCoors.push_back((float)i);
-                upCoors.push_back(heightOfUp * scale);
+                upCoors.push_back(heightOfUp.height * scale);
                 upCoors.push_back((float)-(j + 2));
 
                 downCoors.push_back((float)i);
-                downCoors.push_back(heightOfDown * scale);
+                downCoors.push_back(heightOfDown.height * scale);
                 downCoors.push_back((float)-(j));
 
             }
         }
     }
-    /*
-
-    for (int idx = 0; idx < centerCoors.size(); idx++) {
-        if (idx % 3 == 0) {
-            cout << endl;
-        }
-        cout << centerCoors[idx] << ", ";
-    }
-    */
 }
 
 void initScene(int argc, char *argv[])
