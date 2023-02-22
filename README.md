@@ -12,6 +12,7 @@ This assignment was written on a Windows device using Visual Studio 2019. To cha
   - Click '4': Smoothing mode
   - Click '5': Lines and solid mode (extra)
 - Click 'x': Takes a screenshot
+- Click 'a': Plays animation and takes 300 screenshots of said animation
 - Click and drag: Rotates around the origin (bottom left corner of the object)
 - Hold ctrl and click and drag: Translates the object
 - Hold shift and click and drag: Scales the image

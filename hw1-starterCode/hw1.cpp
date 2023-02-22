@@ -43,6 +43,10 @@ CONTROL_STATE controlState = ROTATE;
 typedef enum { POINTSMODE, LINESMODE, TRIANGLESMODE, SMOOTHINGMODE, LINESANDTRIANGLESMODE } DISPLAY_MODE;
 DISPLAY_MODE displayMode = POINTSMODE;
 
+//For animation
+bool playAnimation = false;
+int numScreenshots = 0;
+
 // Transformations of the terrain.
 float terrainRotate[3] = { 0.0f, 0.0f, 0.0f }; 
 // terrainRotate[0] gives the rotation around x-axis (in degrees)
@@ -197,12 +201,112 @@ void displayFunc()
 
 void idleFunc()
 {
-  // Do some stuff... 
+	// Do some stuff... 
 
-  // For example, here, you can save the screenshots to disk (to make the animation).
+	// For example, here, you can save the screenshots to disk (to make the animation).
 
-  // Send the signal that we should call displayFunc.
-  glutPostRedisplay();
+	// Send the signal that we should call displayFunc.
+
+	if (playAnimation) {
+		GLint mode = glGetUniformLocation(pipelineProgram->GetProgramHandle(), "mode"); //Use to change between first mode for 1, 2, 3, and second mode for 4
+		GLint constant = glGetUniformLocation(pipelineProgram->GetProgramHandle(), "constant");
+
+        //Rotate while going through modes
+        if (numScreenshots < 100) {
+            terrainRotate[1] += 0.3;
+            terrainRotate[0] += 0.2;
+        }
+        else if (numScreenshots < 200) {
+            terrainRotate[1] -= 0.3;
+            terrainRotate[0] -= 0.2;
+
+        }
+
+        //40 screenshots per mode, last 100 show scaling and translating
+		if (numScreenshots < 200) {
+			if (numScreenshots < 40) {
+				displayMode = POINTSMODE;
+				glUniform1i(mode, 0);
+			}
+			else if (numScreenshots < 80) {
+				displayMode = LINESMODE;
+				glUniform1i(mode, 0);
+			}
+			else if (numScreenshots < 120) {
+				displayMode = TRIANGLESMODE;
+				glUniform1i(mode, 0);
+			}
+			else if (numScreenshots < 160) {
+				displayMode = SMOOTHINGMODE;
+				glUniform1i(mode, 1);
+				glUniform1i(constant, scaleConstant);
+			}
+			else if (numScreenshots < 200) {
+				displayMode = LINESANDTRIANGLESMODE;
+				glUniform1i(mode, 0);
+			}
+		}
+		else if (numScreenshots < 300) {
+			displayMode = TRIANGLESMODE;
+			glUniform1i(mode, 0);
+			if (numScreenshots < 212) {
+				terrainTranslate[0] += 3.0;
+				terrainTranslate[1] += 3.0;
+			}
+			else if (numScreenshots < 224) {
+				terrainTranslate[0] -= 3.0;
+				terrainTranslate[1] -= 3.0;
+			}
+			else if (numScreenshots < 236) {
+				terrainScale[0] += 0.1;
+			}
+			else if (numScreenshots < 248) {
+				terrainScale[0] -= 0.1;
+			}
+			else if (numScreenshots < 260) {
+				terrainScale[1] += 0.1;
+			}
+			else if (numScreenshots < 272) {
+				terrainScale[1] -= 0.1;
+			}
+			else if (numScreenshots < 286) {
+				terrainScale[0] += 0.1;
+				terrainScale[1] += 0.1;
+			}
+			else if (numScreenshots < 300) {
+				terrainScale[0] -= 0.1;
+				terrainScale[1] -= 0.1;
+			}
+		}
+
+		if (numScreenshots < 300) {
+			char filename[8] = "";
+			if (numScreenshots < 10) {
+				strcat(filename, "00");
+				strcat(filename, to_string(numScreenshots).c_str());
+				strcat(filename, ".jpg");
+			}
+			else if (numScreenshots < 100) {
+				strcat(filename, "0");
+				strcat(filename, to_string(numScreenshots).c_str());
+                strcat(filename, ".jpg");
+            }
+            else {
+                strcat(filename, to_string(numScreenshots).c_str());
+                strcat(filename, ".jpg");
+            }
+            saveScreenshot(filename);
+            numScreenshots++;
+        }
+	}
+
+	
+	if (numScreenshots >= 300) {
+		playAnimation = false;
+		numScreenshots = 0;
+	}
+
+	glutPostRedisplay();
 }
 
 void reshapeFunc(int w, int h)
@@ -369,6 +473,10 @@ void keyboardFunc(unsigned char key, int x, int y)
     case '5':
         displayMode = LINESANDTRIANGLESMODE;
         glUniform1i(mode, 0);
+        break;
+    
+    case 'a':
+        playAnimation = true;
         break;
   }
 }
